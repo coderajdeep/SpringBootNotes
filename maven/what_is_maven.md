@@ -34,7 +34,70 @@ Example:
 </dependency>
 ```
 
-Maven automatically downloads this dependency and its required **transitive dependencies**.
+Maven downloads this dependency and its required **transitive dependencies**.
+
+### Dependency Version
+
+The `<version>` of a dependency can often be omitted when its version is already managed by a parent POM or `<dependencyManagement>`.
+
+For Spring Boot:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+Spring Boot manages the compatible version.
+
+If Maven doesn't have a managed version, you generally need:
+
+```xml
+<version>1.2.3</version>
+```
+
+You can check the effective configuration with:
+
+```bash
+mvn help:effective-pom
+```
+
+### Classpath
+
+**Classpath = the list of locations where Java looks for classes and resources needed by an application.**
+
+For example:
+
+```text
+target/classes/
+spring-core.jar
+spring-web.jar
+mysql-driver.jar
+```
+
+When your code uses:
+
+```java
+import org.springframework.web.bind.annotation.RestController;
+```
+
+Java looks in the classpath to find `RestController`.
+
+There are two important classpaths:
+
+- **Compile-time classpath** → classes needed by `javac` while compiling.
+- **Runtime classpath** → classes needed by the JVM while running.
+
+Maven manages dependencies and constructs the appropriate classpath when compiling/running the project.
+
+Example:
+
+```bash
+java -cp "target/classes;lib/*" com.example.Main
+```
+
+Here, `-cp` means **classpath**.
 
 ### Maven Lifecycle
 
@@ -54,7 +117,7 @@ mvn verify
 mvn clean package
 ```
 
-**Important:** When you run a later phase, Maven executes the earlier phases too.
+When you run a later phase, Maven executes the earlier phases too.
 
 For example:
 
@@ -81,7 +144,7 @@ validate
 **`verify`**
 - Runs the lifecycle through `verify`
 - Uses the artifact produced during `package`
-- Performs additional configured checks/verification
+- Performs configured verification/checks
 - Normally does **not create another JAR**
 
 ### Spring Boot + Maven
@@ -115,6 +178,32 @@ Run:
 java -jar target/demo-1.0.0.jar
 ```
 
-### One-line definition
+### Key Concepts
 
-> **Maven is a Java build and dependency management tool that uses `pom.xml` to manage a project's dependencies, build lifecycle, plugins, and packaging.**
+```text
+Maven
+  ↓
+Reads pom.xml
+  ↓
+Downloads dependencies
+  ↓
+Builds the classpath
+  ↓
+Compiles code
+  ↓
+Runs tests
+  ↓
+Packages application
+  ↓
+Verifies / installs / deploys
+```
+
+### One-line definitions
+
+> **Maven:** Java build automation and dependency management tool.
+
+> **POM:** Maven's project configuration file (`pom.xml`).
+
+> **Dependency:** A library that your project requires.
+
+> **Classpath:** Locations/JARs from which Java finds required classes and resources.
